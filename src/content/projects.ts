@@ -1,4 +1,5 @@
 import type { Project } from "../types/project";
+import dropDenLogo from "../assets/projects/drop-den-logo.png";
 import lagRatLogo from "../assets/projects/lag-rat-logo.png";
 
 // * PROJECT FORMAT
@@ -76,6 +77,7 @@ export const projects: Project[] = [
     stack: ["Rust", "React", "TypeScript", "Tauri", "SQLite"],
     featured: true,
     githubUrl: "https://github.com/ElijahMwambazi/drop-den",
+    logo: dropDenLogo,
     status: "In progress",
     type: "Local file-sharing app",
     focus: "Local-first sharing, cross-device delivery, privacy",
