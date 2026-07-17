@@ -39,6 +39,12 @@ function navLinkClassName({ isActive }: { isActive: boolean }) {
     : "rounded-full px-3 py-1.5 text-neutral-300 transition hover:bg-white/[0.04] hover:text-white";
 }
 
+function mobileNavLinkClassName({ isActive }: { isActive: boolean }) {
+  return isActive
+    ? "rounded-lg bg-white/8 px-3 py-3 text-white"
+    : "rounded-lg px-3 py-3 text-neutral-300 transition hover:bg-white/4 hover:text-white";
+}
+
 export function SiteHeader() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -58,7 +64,10 @@ export function SiteHeader() {
           EM
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium text-neutral-300 md:flex">
+        <nav
+          aria-label="Primary navigation"
+          className="hidden items-center gap-6 text-sm font-medium text-neutral-300 md:flex"
+        >
           <NavLink to="/" className={navLinkClassName}>
             Home
           </NavLink>
@@ -68,15 +77,19 @@ export function SiteHeader() {
           <NavLink to="/notes" className={navLinkClassName}>
             Notes
           </NavLink>
-          <a href={contactHref} className="transition hover:text-white">
+          <Link
+            to={contactHref}
+            className="rounded-full px-3 py-1.5 transition hover:bg-white/[0.04] hover:text-white"
+          >
             Contact
-          </a>
+          </Link>
         </nav>
 
         <button
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          aria-controls="mobile-navigation"
           onClick={() => setOpen((value) => !value)}
           className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/3 text-neutral-200 transition hover:bg-white/6 md:hidden"
         >
@@ -86,39 +99,39 @@ export function SiteHeader() {
 
       {open ? (
         <div className="border-t border-white/10 bg-neutral-950/95 md:hidden">
-          <nav className="mx-auto flex max-w-6xl flex-col px-5 py-4 text-sm font-medium text-neutral-300 sm:px-6">
+          <nav
+            id="mobile-navigation"
+            aria-label="Mobile navigation"
+            className="mx-auto flex max-w-6xl flex-col px-5 py-4 text-sm font-medium text-neutral-300 sm:px-6"
+          >
             <NavLink
               to="/"
               onClick={closeMenu}
-              className={({ isActive }) =>
-                isActive
-                  ? "rounded-lg bg-white/8 px-3 py-3 text-white"
-                  : "rounded-lg px-3 py-3 text-neutral-300 transition hover:bg-white/4 hover:text-white"
-              }
+              className={mobileNavLinkClassName}
             >
               Home
             </NavLink>
             <NavLink
               to="/work"
               onClick={closeMenu}
-              className="rounded-lg px-3 py-3 transition hover:bg-white/4 hover:text-white"
+              className={mobileNavLinkClassName}
             >
               Work
             </NavLink>
             <NavLink
               to="/notes"
               onClick={closeMenu}
-              className="rounded-lg px-3 py-3 transition hover:bg-white/4 hover:text-white"
+              className={mobileNavLinkClassName}
             >
               Notes
             </NavLink>
-            <a
-              href={contactHref}
+            <Link
+              to={contactHref}
               onClick={closeMenu}
               className="rounded-lg px-3 py-3 transition hover:bg-white/4 hover:text-white"
             >
               Contact
-            </a>
+            </Link>
           </nav>
         </div>
       ) : null}

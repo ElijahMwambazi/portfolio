@@ -18,6 +18,7 @@ export const router = createBrowserRouter([
       { path: "work/:slug", element: <ProjectPage /> },
       { path: "notes", element: <NotesPage /> },
       { path: "notes/:slug", element: <NotePage /> },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);
