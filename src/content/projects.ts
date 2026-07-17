@@ -67,4 +67,37 @@ export const projects: Project[] = [
       },
     ],
   },
+  {
+    slug: "drop-den",
+    title: "Drop Den",
+    summary: "Local-only file and message sharing for nearby devices.",
+    description:
+      "Drop Den moves files and short messages between devices on the same local network, without accounts, cloud uploads, or public sharing links.",
+    stack: ["Rust", "React", "TypeScript", "Tauri", "SQLite"],
+    featured: true,
+    githubUrl: "https://github.com/ElijahMwambazi/drop-den",
+    status: "In progress",
+    type: "Local file-sharing app",
+    focus: "Local-first sharing, cross-device delivery, privacy",
+    overview: [
+      {
+        title: "What it is",
+        body: "Drop Den is a local-only transfer hub for sharing files and short messages with nearby phones, tablets, and computers through a browser, desktop app, or Android app.",
+      },
+      {
+        title: "How it works",
+        body: "One host machine runs the backend, and participating devices connect over the same local network using its displayed address or QR code. Files and messages pass through the host rather than a cloud service.",
+      },
+      {
+        title: "Current direction",
+        body: "The current work is focused on preparing public packages for Linux, Android, and Windows, with macOS packaging and release signing still in progress.",
+      },
+    ],
+    links: [
+      {
+        label: "Technical overview",
+        href: "https://github.com/ElijahMwambazi/drop-den/blob/main/docs/dropden.md",
+      },
+    ],
+  },
 ];
