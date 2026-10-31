@@ -4,6 +4,8 @@ import { projects } from "../content/projects";
 import { Container } from "../components/ui/Container";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { ProjectLogo } from "../components/ui/ProjectLogo";
+import { usePageMeta } from "../hooks/usePageMeta";
+import { absoluteUrl } from "../lib/site";
 import { ScriptsSection } from "../components/work/ScriptsSection";
 
 function GitHubIcon() {
@@ -22,6 +24,12 @@ function GitHubIcon() {
 const ALL = "All";
 
 export function WorkPage() {
+  usePageMeta({
+    title: "Work",
+    description:
+      "Selected projects and tools: local-first apps, observability, Bitcoin and Lightning payments, and market data.",
+    canonical: absoluteUrl("/work"),
+  });
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState(ALL);
   const [tag, setTag] = useState(ALL);
