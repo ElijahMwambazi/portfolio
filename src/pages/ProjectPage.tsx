@@ -1,6 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { projects } from "../content/projects";
 import { Container } from "../components/ui/Container";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { ProjectLogo } from "../components/ui/ProjectLogo";
+import { DownloadPanel } from "../components/project/DownloadPanel";
+import { ScreenshotGallery } from "../components/project/ScreenshotGallery";
+import { InstallTabs } from "../components/project/InstallTabs";
 
 function GitHubIcon() {
   return (
@@ -68,8 +73,9 @@ export function ProjectPage() {
     );
   }
 
-  const projectLinks = project.links ?? [];
-  const hasGitHub = Boolean(project.githubUrl);
+  const projectLinks = (project.links ?? []).filter(
+    (link) => link.href !== project.githubUrl && link.href !== project.liveUrl,
+  );
   const infoItems = [
     { label: "Type", value: project.type ?? "Software project" },
     {
@@ -77,8 +83,10 @@ export function ProjectPage() {
       value: project.focus ?? "Practical tooling and clear systems",
     },
     { label: "Stack", value: project.stack.join(" · ") },
-    { label: "Status", value: project.status ?? "In progress" },
-  ].filter((item) => item.value);
+    ...(project.requirements?.length
+      ? [{ label: "Requirements", value: project.requirements.join(" · ") }]
+      : []),
+  ];
 
   const contentSections =
     project.overview && project.overview.length > 0
@@ -88,11 +96,10 @@ export function ProjectPage() {
             title: "What it is",
             body: `${project.title} is part of my broader interest in building tools that are useful in everyday practice and easier to reason about.`,
           },
-          {
-            title: "Current direction",
-            body: "This project is still evolving. The next step is to deepen the implementation, refine the user experience, and keep improving the structure so it communicates the project clearly both technically and visually.",
-          },
         ];
+
+  const currentIndex = projects.findIndex((p) => p.slug === project.slug);
+  const next = projects[(currentIndex + 1) % projects.length];
 
   return (
     <section className="relative overflow-hidden py-12 sm:py-16 lg:py-24">
@@ -107,23 +114,25 @@ export function ProjectPage() {
             ← Back to work
           </Link>
 
+          {/* Hero + download */}
           <div className="grid items-start gap-8 sm:gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
             <div>
               <div className="flex items-start gap-3 sm:gap-4">
-                {project.logo ? (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/4 p-2 backdrop-blur-md sm:h-16 sm:w-16 sm:rounded-2xl">
-                    <img
-                      src={project.logo}
-                      alt={`${project.title} logo`}
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                ) : null}
+                <ProjectLogo
+                  title={project.title}
+                  logo={project.logo}
+                  className="h-12 w-12 sm:h-16 sm:w-16 sm:rounded-2xl"
+                />
 
                 <div className="min-w-0">
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-neutral-400 sm:mb-3 sm:text-sm">
-                    {project.year ? `Project · ${project.year}` : "Project"}
-                  </p>
+                  <div className="mb-2 flex flex-wrap items-center gap-3 sm:mb-3">
+                    <p className="text-[11px] uppercase tracking-[0.16em] text-neutral-400 sm:text-sm">
+                      {project.year ? `Project · ${project.year}` : "Project"}
+                    </p>
+                    {project.status ? (
+                      <StatusBadge status={project.status} />
+                    ) : null}
+                  </div>
 
                   <h1 className="text-2xl font-semibold tracking-tight text-neutral-50 leading-[1.08] sm:text-4xl lg:text-6xl lg:leading-[1.05]">
                     {project.title}
@@ -151,7 +160,7 @@ export function ProjectPage() {
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
-                {hasGitHub ? (
+                {project.githubUrl ? (
                   <a
                     href={project.githubUrl}
                     target="_blank"
@@ -174,53 +183,95 @@ export function ProjectPage() {
                   </a>
                 ) : null}
 
-                {projectLinks
-                  .filter(
-                    (link) =>
-                      link.href !== project.githubUrl &&
-                      link.href !== project.liveUrl,
-                  )
-                  .map((link) => (
-                    <a
-                      key={link.href}
-                      href={link.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 transition hover:text-white"
-                    >
-                      <ExternalLinkIcon />
-                      <span>{link.label}</span>
-                    </a>
-                  ))}
+                {projectLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-neutral-400 transition hover:text-white"
+                  >
+                    <ExternalLinkIcon />
+                    <span>{link.label}</span>
+                  </a>
+                ))}
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl sm:p-5 lg:p-6">
-              <div className="pointer-events-none absolute inset-0">
-                <div className="absolute -top-16 left-8 h-40 w-40 rounded-full bg-sky-400/10 blur-3xl" />
-                <div className="absolute bottom-0 right-0 h-32 w-32 rounded-full bg-violet-400/10 blur-3xl" />
-              </div>
+            <div className="space-y-5">
+              <DownloadPanel key={project.slug} project={project} />
 
-              <div className="relative z-10">
+              <div className="rounded-3xl border border-white/10 bg-white/3 p-4 sm:p-5 lg:p-6">
                 <p className="mb-4 text-xs uppercase tracking-[0.16em] text-neutral-500">
-                  Overview
+                  Details
                 </p>
-
-                <div className="space-y-5">
+                <dl className="space-y-4">
                   {infoItems.map((item) => (
                     <div key={item.label}>
-                      <p className="text-sm text-neutral-500">{item.label}</p>
-                      <p className="mt-1 text-sm font-medium text-neutral-100 sm:text-base">
+                      <dt className="text-sm text-neutral-500">{item.label}</dt>
+                      <dd className="mt-1 text-sm font-medium text-neutral-100 sm:text-base">
                         {item.value}
-                      </p>
+                      </dd>
                     </div>
                   ))}
-                </div>
+                </dl>
               </div>
             </div>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:mt-12 sm:gap-6 lg:grid-cols-2">
+          {/* Screenshots */}
+          {project.screenshots && project.screenshots.length > 0 ? (
+            <div className="mt-12 sm:mt-14">
+              <h2 className="mb-5 text-lg font-medium text-neutral-100 sm:text-xl">
+                Screenshots
+              </h2>
+              <ScreenshotGallery
+                shots={project.screenshots}
+                title={project.title}
+              />
+            </div>
+          ) : (
+            <div className="mt-12 rounded-3xl border border-dashed border-white/10 p-6 text-center text-sm text-neutral-500 sm:mt-14">
+              Screenshots coming soon.
+            </div>
+          )}
+
+          {/* Features */}
+          {project.features && project.features.length > 0 ? (
+            <div className="mt-12 sm:mt-14">
+              <h2 className="mb-5 text-lg font-medium text-neutral-100 sm:text-xl">
+                Features
+              </h2>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {project.features.map((feature) => (
+                  <div
+                    key={feature.title}
+                    className="rounded-2xl border border-white/10 bg-white/4 p-4 transition hover:border-white/20 hover:bg-white/6 sm:p-5"
+                  >
+                    <h3 className="text-base font-semibold text-neutral-100">
+                      {feature.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-7 text-neutral-400">
+                      {feature.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Install */}
+          {project.install && project.install.length > 0 ? (
+            <div className="mt-12 rounded-3xl border border-white/10 bg-white/3 p-4 sm:mt-14 sm:p-5 lg:p-6">
+              <h2 className="mb-5 text-lg font-medium text-neutral-100 sm:text-xl">
+                Get started
+              </h2>
+              <InstallTabs items={project.install} />
+            </div>
+          ) : null}
+
+          {/* Overview */}
+          <div className="mt-12 grid gap-5 sm:mt-14 sm:gap-6 lg:grid-cols-2">
             {contentSections.map((section) => (
               <div
                 key={section.title}
@@ -235,6 +286,50 @@ export function ProjectPage() {
               </div>
             ))}
           </div>
+
+          {/* FAQ */}
+          {project.faq && project.faq.length > 0 ? (
+            <div className="mt-12 sm:mt-14">
+              <h2 className="mb-5 text-lg font-medium text-neutral-100 sm:text-xl">
+                FAQ
+              </h2>
+              <div className="space-y-3">
+                {project.faq.map((item) => (
+                  <details
+                    key={item.question}
+                    className="group rounded-2xl border border-white/10 bg-white/4 px-4 py-3 open:bg-white/6 sm:px-5"
+                  >
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-neutral-100 sm:text-base [&::-webkit-details-marker]:hidden">
+                      {item.question}
+                      <span
+                        aria-hidden="true"
+                        className="text-neutral-500 transition group-open:rotate-45"
+                      >
+                        +
+                      </span>
+                    </summary>
+                    <p className="mt-3 text-sm leading-7 text-neutral-400">
+                      {item.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {next && next.slug !== project.slug ? (
+            <div className="mt-14 border-t border-white/10 pt-8">
+              <p className="text-xs uppercase tracking-[0.16em] text-neutral-500">
+                Next project
+              </p>
+              <Link
+                to={`/work/${next.slug}`}
+                className="mt-2 inline-flex text-xl font-semibold text-neutral-100 transition hover:text-white sm:text-2xl"
+              >
+                {next.title} →
+              </Link>
+            </div>
+          ) : null}
         </div>
       </Container>
     </section>
