@@ -1,6 +1,10 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { projects } from "../content/projects";
 import { Container } from "../components/ui/Container";
+import { StatusBadge } from "../components/ui/StatusBadge";
+import { ProjectLogo } from "../components/ui/ProjectLogo";
+import { ScriptsSection } from "../components/work/ScriptsSection";
 
 function GitHubIcon() {
   return (
@@ -15,10 +19,50 @@ function GitHubIcon() {
   );
 }
 
-export function WorkPage() {
-  const featuredProjects = projects.filter((project) => project.featured);
+const ALL = "All";
 
-  const otherProjects = projects.filter((project) => !project.featured);
+export function WorkPage() {
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState(ALL);
+  const [tag, setTag] = useState(ALL);
+
+  const statuses = useMemo(
+    () => [
+      ALL,
+      ...Array.from(new Set(projects.map((p) => p.status).filter(Boolean))),
+    ] as string[],
+    [],
+  );
+  const tags = useMemo(
+    () => [ALL, ...Array.from(new Set(projects.flatMap((p) => p.stack))).sort()],
+    [],
+  );
+
+  const visible = projects.filter((p) => {
+    if (status !== ALL && p.status !== status) return false;
+    if (tag !== ALL && !p.stack.includes(tag)) return false;
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return [p.title, p.summary, p.description, p.focus ?? "", ...p.stack]
+      .join(" ")
+      .toLowerCase()
+      .includes(q);
+  });
+
+  const filtering = query !== "" || status !== ALL || tag !== ALL;
+
+  function reset() {
+    setQuery("");
+    setStatus(ALL);
+    setTag(ALL);
+  }
+
+  const chip = (active: boolean) =>
+    `rounded-full border px-3 py-1.5 text-xs transition sm:text-sm ${
+      active
+        ? "border-white/30 bg-white text-black font-semibold"
+        : "border-white/10 bg-white/4 text-neutral-300 hover:border-white/20 hover:bg-white/8 hover:text-white"
+    }`;
 
   return (
     <section className="relative overflow-hidden py-12 sm:py-16 lg:py-24">
@@ -40,191 +84,169 @@ export function WorkPage() {
               software, useful tools, Bitcoin and Lightning, privacy, and
               systems that are easier to understand and work with.
             </p>
+
+            <a
+              href="#tools"
+              className="mt-5 inline-flex text-sm text-neutral-400 transition hover:text-white"
+            >
+              Jump to tools &amp; scripts ↓
+            </a>
           </div>
 
-          {featuredProjects.length > 0 ? (
-            <div className="mt-10 sm:mt-12 lg:mt-14">
-              <div className="mb-5 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                <h2 className="text-lg font-medium text-neutral-100 sm:text-xl">
-                  Featured
-                </h2>
-                <p className="text-sm text-neutral-500">
-                  {featuredProjects.length} project
-                  {featuredProjects.length > 1 ? "s" : ""}
-                </p>
-              </div>
+          {/* Filters */}
+          <div className="mt-10 space-y-4 sm:mt-12">
+            <label className="block max-w-md">
+              <span className="sr-only">Search projects</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search projects…"
+                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-neutral-100 placeholder:text-neutral-500 focus:border-white/30 focus:outline-none"
+              />
+            </label>
 
-              <div className="grid gap-5 sm:gap-6 lg:grid-cols-2">
-                {featuredProjects.map((project) => (
-                  <article
-                    key={project.slug}
-                    className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 sm:p-5 lg:p-6 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07] hover:shadow-[0_20px_60px_rgba(0,0,0,0.32)]"
-                  >
-                    <div className="pointer-events-none absolute inset-0">
-                      <div className="absolute -top-16 left-8 h-40 w-40 rounded-full bg-sky-400/10 blur-3xl transition-all duration-300 group-hover:bg-sky-400/15" />
-                      <div className="absolute bottom-0 right-0 h-32 w-32 rounded-full bg-violet-400/10 blur-3xl transition-all duration-300 group-hover:bg-violet-400/15" />
-                    </div>
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-label="Filter by status"
+            >
+              {statuses.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  aria-pressed={status === s}
+                  onClick={() => setStatus(s)}
+                  className={chip(status === s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
 
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="flex min-w-0 items-start gap-3 sm:gap-4">
-                        {project.logo ? (
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/4 p-2 backdrop-blur-md sm:h-14 sm:w-14 sm:rounded-2xl">
-                            <img
-                              src={project.logo}
-                              alt={`${project.title} logo`}
-                              className="h-full w-full object-contain"
-                            />
-                          </div>
-                        ) : null}
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-label="Filter by technology"
+            >
+              {tags.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={tag === t}
+                  onClick={() => setTag(t)}
+                  className={chip(tag === t)}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
 
-                        <div className="min-w-0">
-                          <h3 className="text-lg font-semibold tracking-tight text-neutral-100 sm:text-xl lg:text-2xl">
-                            {project.title}
-                          </h3>
-                          <p className="mt-2 text-sm leading-6 text-neutral-400 sm:leading-7 sm:text-base">
-                            {project.summary}
-                          </p>
-                        </div>
+            <p className="text-sm text-neutral-500" role="status">
+              {visible.length} of {projects.length} project
+              {projects.length === 1 ? "" : "s"}
+              {filtering ? (
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="ml-3 text-neutral-300 underline underline-offset-4 hover:text-white"
+                >
+                  Clear filters
+                </button>
+              ) : null}
+            </p>
+          </div>
+
+          {visible.length === 0 ? (
+            <div className="mt-8 rounded-3xl border border-dashed border-white/10 p-8 text-center text-sm text-neutral-500">
+              No projects match those filters.
+            </div>
+          ) : (
+            <div className="mt-6 grid gap-5 sm:gap-6 md:grid-cols-2">
+              {visible.map((project) => (
+                <article
+                  key={project.slug}
+                  className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.07] hover:shadow-[0_20px_60px_rgba(0,0,0,0.32)] sm:p-5 lg:p-6"
+                >
+                  <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute -top-16 left-8 h-40 w-40 rounded-full bg-sky-400/10 blur-3xl transition-all duration-300 group-hover:bg-sky-400/15" />
+                    <div className="absolute bottom-0 right-0 h-32 w-32 rounded-full bg-violet-400/10 blur-3xl transition-all duration-300 group-hover:bg-violet-400/15" />
+                  </div>
+
+                  <div className="relative flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-3 sm:gap-4">
+                      <ProjectLogo
+                        title={project.title}
+                        logo={project.logo}
+                        className="h-12 w-12 sm:h-14 sm:w-14 sm:rounded-2xl"
+                      />
+                      <div className="min-w-0">
+                        <h2 className="text-lg font-semibold tracking-tight text-neutral-100 sm:text-xl lg:text-2xl">
+                          {project.title}
+                        </h2>
+                        <p className="mt-2 text-sm leading-6 text-neutral-400 sm:text-base sm:leading-7">
+                          {project.summary}
+                        </p>
                       </div>
-
-                      <span className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs uppercase tracking-[0.16em] text-neutral-300 backdrop-blur-md">
-                        Featured
-                      </span>
                     </div>
+                    {project.status ? (
+                      <div className="shrink-0">
+                        <StatusBadge status={project.status} />
+                      </div>
+                    ) : null}
+                  </div>
 
-                    <p className="mt-5 text-sm leading-7 text-neutral-300 sm:mt-6 sm:text-base sm:leading-8">
-                      {project.description}
-                    </p>
-
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {project.stack.map((item) => (
-                        <span
-                          key={item}
-                          className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-xs text-neutral-200 backdrop-blur-md sm:text-sm"
-                        >
-                          {item}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-4">
-                      <Link
-                        to={`/work/${project.slug}`}
-                        className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white px-4 py-2.5 text-sm text-black! font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:bg-neutral-200"
+                  <div className="relative mt-5 flex flex-wrap gap-2">
+                    {project.stack.map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => setTag(item)}
+                        title={`Filter by ${item}`}
+                        className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-neutral-300 transition hover:border-white/25 hover:text-white"
                       >
-                        View project
-                      </Link>
+                        {item}
+                      </button>
+                    ))}
+                  </div>
 
-                      {project.githubUrl ? (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label={`${project.title} GitHub repository`}
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/4 text-neutral-300 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8 hover:text-white"
-                        >
-                          <GitHubIcon />
-                        </a>
-                      ) : null}
+                  <div className="relative mt-auto flex flex-wrap items-center gap-3 pt-6 sm:gap-4">
+                    <Link
+                      to={`/work/${project.slug}`}
+                      className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white px-4 py-2.5 text-sm text-black! font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:bg-neutral-200"
+                    >
+                      {project.release ? "Download & details" : "View project"}
+                    </Link>
 
-                      {project.liveUrl ? (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-sm font-medium text-neutral-400 transition hover:text-white"
-                        >
-                          Live
-                        </a>
-                      ) : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
+                    {project.githubUrl ? (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${project.title} GitHub repository`}
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/4 text-neutral-300 transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8 hover:text-white"
+                      >
+                        <GitHubIcon />
+                      </a>
+                    ) : null}
+
+                    {project.liveUrl ? (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm font-medium text-neutral-400 transition hover:text-white"
+                      >
+                        Live
+                      </a>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
             </div>
-          ) : null}
+          )}
 
-          {otherProjects.length > 0 ? (
-            <div className="mt-12 sm:mt-14 lg:mt-16">
-              <div className="mb-5 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                <h2 className="text-lg font-medium text-neutral-100 sm:text-xl">
-                  More work
-                </h2>
-                <p className="text-sm text-neutral-500">
-                  {otherProjects.length} project
-                  {otherProjects.length > 1 ? "s" : ""}
-                </p>
-              </div>
-
-              <div className="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
-                {otherProjects.map((project) => (
-                  <article
-                    key={project.slug}
-                    className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/4 pp-4 sm:p-5 backdrop-blur-lg transition-all duration-300 hover:border-white/20 hover:bg-white/6 hover:shadow-[0_16px_40px_rgba(0,0,0,0.22)]"
-                  >
-                    <div className="pointer-events-none absolute inset-0">
-                      <div className="absolute -right-10 top-0 h-24 w-24 rounded-full bg-white/5 blur-2xl" />
-                    </div>
-
-                    <div className="relative z-10">
-                      <div className="flex items-start gap-3">
-                        {project.logo ? (
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/4 p-2 backdrop-blur-md">
-                            <img
-                              src={project.logo}
-                              alt={`${project.title} logo`}
-                              className="h-full w-full object-contain"
-                            />
-                          </div>
-                        ) : null}
-
-                        <div className="min-w-0">
-                          <h3 className="text-lg font-semibold text-neutral-100">
-                            {project.title}
-                          </h3>
-
-                          <p className="mt-2 text-sm leading-7 text-neutral-400">
-                            {project.summary}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        {project.stack.map((item) => (
-                          <span
-                            key={item}
-                            className="rounded-full border border-white/10 px-3 py-1 text-xs text-neutral-400"
-                          >
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="mt-6 flex items-center gap-3">
-                        <Link
-                          to={`/work/${project.slug}`}
-                          className="text-sm font-medium text-neutral-300 transition hover:text-white"
-                        >
-                          View project
-                        </Link>
-
-                        {project.githubUrl ? (
-                          <a
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            aria-label={`${project.title} GitHub repository`}
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/4 text-neutral-300 transition hover:border-white/20 hover:bg-white/8 hover:text-white"
-                          >
-                            <GitHubIcon />
-                          </a>
-                        ) : null}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          <ScriptsSection />
         </div>
       </Container>
     </section>
