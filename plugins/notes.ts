@@ -6,6 +6,7 @@ import {
   noteMeta,
   renderPageHtml,
   renderRss,
+  extractProjectSlugs,
   renderSitemap,
 } from "../src/lib/seo";
 
@@ -19,6 +20,8 @@ type Options = {
   draftsDir: string;
   /** Production site origin, e.g. https://example.com (no trailing slash). */
   siteOrigin?: string;
+  /** Source of the projects list, used to add /work/:slug to the sitemap. */
+  projectsFile?: string;
 };
 
 function readDir(dir: string): { file: string; source: string }[] {
@@ -127,8 +130,15 @@ export function notesPlugin(options: Options): Plugin {
           );
         }
 
+        const projectPaths = () =>
+          options.projectsFile && fs.existsSync(options.projectsFile)
+            ? extractProjectSlugs(fs.readFileSync(options.projectsFile, "utf8")).map(
+                (s) => `/work/${s}`,
+              )
+            : [];
+
         if (origin) {
-          fs.writeFileSync(path.join(outDir, "sitemap.xml"), renderSitemap(origin, notes));
+          fs.writeFileSync(path.join(outDir, "sitemap.xml"), renderSitemap(origin, notes, projectPaths()));
           fs.writeFileSync(path.join(outDir, "rss.xml"), renderRss(origin, notes.slice(0, 20)));
         } else {
           config.logger.warn(

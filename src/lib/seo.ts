@@ -85,11 +85,16 @@ export function noteMeta(note: ParsedNote, origin?: string): PageMeta {
   };
 }
 
-export function renderSitemap(origin: string, notes: ParsedNote[]): string {
+export function renderSitemap(
+  origin: string,
+  notes: ParsedNote[],
+  extraPaths: string[] = [],
+): string {
   const urls = [
     { loc: `${origin}/` },
     { loc: `${origin}/work` },
     { loc: `${origin}/notes` },
+    ...extraPaths.map((p) => ({ loc: `${origin}${p}` })),
     ...notes.map((n) => ({
       loc: `${origin}/notes/${n.slug}`,
       lastmod: n.updated ?? n.date,
@@ -130,4 +135,13 @@ ${items}
   </channel>
 </rss>
 `;
+}
+
+/**
+ * Reads `slug: "..."` from the top-level project entries in projects.ts.
+ * The file imports image assets, so it can't be imported from the Node-side build plugin;
+ * a test checks this stays in sync with the real `projects` export.
+ */
+export function extractProjectSlugs(source: string): string[] {
+  return [...source.matchAll(/^ {4}slug: "([^"]+)"/gm)].map((m) => m[1]);
 }

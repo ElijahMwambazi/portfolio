@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
       notesPlugin({
         notesDir: path.resolve(root, "src/content/notes"),
         draftsDir: path.resolve(root, "src/content/drafts"),
+        projectsFile: path.resolve(root, "src/content/projects.ts"),
         siteOrigin: env.VITE_SITE_URL || undefined,
       }),
     ],
