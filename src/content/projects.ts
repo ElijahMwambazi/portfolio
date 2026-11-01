@@ -579,7 +579,7 @@ npm run dev`,
     title: "AI Dev Stack",
     summary: "Documented, verified AI coding workstation setup on Fedora.",
     description:
-      "A version-controlled source of truth for a staged Fedora AI development stack: sanitized configuration templates, diagnostics, and dated validation evidence for working with Codex, Claude Code, Graphify, Headroom, and Git worktrees.",
+      "A version-controlled source of truth for a staged Fedora AI development stack: configuration examples and environment templates, diagnostics, and dated validation evidence for working with Codex, Claude Code, Graphify, Headroom, and Git worktrees.",
     stack: ["Bash", "Python", "Fedora", "Git worktrees", "Markdown"],
     status: "Reference",
     type: "Documentation and tooling",

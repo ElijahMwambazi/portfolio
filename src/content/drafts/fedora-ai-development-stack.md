@@ -8,7 +8,7 @@ featured: false
 draft: true
 ---
 
-> **Draft status.** Written from the `ai-dev-stack` repository (17 commits, 2026-09-19 to 2026-10-10; claims checked against the repository on 2026-11-01). Tool versions and model names are **a snapshot dated 2026-10-10**; two of them had already changed on the machine by 2026-11-01 (see "Snapshot decay"). **[AUTHOR REVIEW]** marks the only passages that need your personal confirmation. The repository is private, so this article summarises its evidence instead of linking it. Delete this note and the checklist before publishing.
+> **Draft status.** Written from the `ai-dev-stack` repository (17 commits, 2026-09-19 to 2026-10-10; claims checked against the repository on 2026-11-01). Tool versions and model names are **a snapshot dated 2026-10-10**; two of them had already changed on the machine by 2026-11-01 (see "Snapshot decay"). The repository is private, so this article summarises its evidence instead of linking it. Delete this note and the checklist before publishing.
 
 ## The problem
 
@@ -39,9 +39,9 @@ Langfuse  -> explicit synthetic metadata harness only
 
 (This is a simplified rendering of the diagram in the repository's final-architecture document.)
 
-**Version snapshot, as recorded in the repository's docs and final-state evidence on 2026-10-10.** Treat this as a dated record. Re-check before publishing; tools change quickly.
+**Version snapshot, as recorded in the repository's docs and final-state evidence on October 10, 2026.** Treat this as a dated record. Re-check before publishing; tools change quickly.
 
-| Component | Version recorded 2026-10-10 |
+| Component | Version recorded October 10, 2026 |
 |---|---|
 | Codex CLI | 0.162.0 |
 | Claude Code | 2.1.296 |
@@ -92,13 +92,13 @@ The most useful artefact in the repo is `docs/verification-matrix.md`. Each row 
 
 ## Lessons learned
 
-The lessons below are the ones the repository's records support. They are stated as documented findings, not as personal reactions. **[AUTHOR REVIEW: confirm that each reflects your own conclusions, and edit or cut any that does not.]**
+The most important lesson from these experiments is that coordinating multiple coding agents requires more than giving each agent a separate task.
 
-1. **Isolate each agent in its own Git worktree.** A model-free test (the marker-file check in Phase 9) separated "Git and the helpers isolate correctly" from "an agent behaved". Starting each worktree from the committed base, not the dirty primary checkout, kept the comparison fair and left the primary checkout's uncommitted work and `main` untouched.
-2. **Make agent output independently verifiable.** Claude's coding result was accepted because the operator ran the tests independently (5 of 5), not because the agent reported success, and its own denied test run was recorded as PARTIAL rather than hidden. The verification matrix applies the same rule to tools: installed, discovered, invoked and succeeded are different states.
-3. **Compare explicitly, on equal terms.** Both agents received the same specification and base commit, and the diff was reviewed against the base and against each other. The docs treat one small task as a selection for that task, not a ranking of models.
-4. **Keep a human in the review gate.** The documented gate is tests, diff, history, compare, choose, merge, tests. Nothing in the stack launches agents, commits, merges or pushes on its own, and neither compared branch was merged.
-5. **Isolation is operational, not a security boundary.** Worktrees prevent ordinary edit collisions. They share Git objects and anything else the operating system lets both processes read, so they are not a sandbox or a credential boundary. Credentials, sessions, databases and generated indexes stay outside every repository, and Git ignore rules are not a history purge.
+Git worktrees gave Codex and Claude Code independent working directories while preserving a common repository history. This made it easier to inspect changes, run tests separately, and compare implementations before deciding what to integrate.
+
+The experiments reinforced five principles: maintain isolated working environments, verify outputs independently, compare alternatives using consistent criteria, retain human control over integration decisions, and recognize that worktree isolation is an operational safeguard rather than a security boundary.
+
+I also learned the importance of distinguishing a tool that is installed or configured from one whose usefulness has actually been demonstrated. A development environment becomes more valuable when its capabilities and limitations are documented and reproducible.
 
 ## Current limitations and future work
 
@@ -114,7 +114,7 @@ The lessons below are the ones the repository's records support. They are stated
 - **Reproducibility.** Capture the applied configuration so the setup can be rebuilt from the repository, instead of only documented and audited. Today the live configuration lives outside Git.
 - **Observability.** Langfuse is wired only to a synthetic, metadata-only harness. Extending tracing to real agent work would have to keep the rule that no prompts, responses or source are exported.
 - **Controlled agent orchestration.** Any orchestration would have to preserve the review gate and the "nothing automatic" rule, so the operator still decides what runs.
-- **A Telegram interface (planned).** Planned remote task submission, status reporting and result review from a phone. It is not built, and nothing in the repository implements or tests it. The planned safeguards are authentication of who may submit tasks, constrained execution limited to approved tasks and worktrees, and explicit human approval before results are accepted or anything is merged. **[AUTHOR REVIEW: confirm this description matches what you intend, and add anything about scope or timing you are willing to state.]**
+- **A Telegram interface (planned).** The next direction is a Telegram-based interface for interacting with Codex and Claude Code remotely. The intention is to submit approved development tasks, monitor progress, receive results and review proposed changes from a phone without needing to interact directly with the workstation. The interface should authenticate users, restrict operations to approved repositories and worktrees, maintain an activity history, and require explicit approval before changes are merged or deployed. It remains a planned extension, not an implemented capability: nothing in the repository implements or tests it.
 
 ---
 
@@ -122,8 +122,8 @@ The lessons below are the ones the repository's records support. They are stated
 
 - [ ] Re-check every version and model name against the live setup.
 - [ ] The `ai-dev-stack` repository is **private** (checked 2026-11-01); there is no `chore/prepare-public` branch and no commit after 2026-10-10. Either do not link it, or publish it first. Before making it public, remove absolute home-directory paths from its docs and reports (found in 16 of its 95 tracked files).
-- [ ] Do not link or name the private repository's URL in the article. The Work page entry for AI Dev Stack currently links to it; decide whether to keep that link.
+- [ ] Do not link or name the private repository's URL in the article. The Work page entry no longer links to it.
 - [ ] Confirm you are comfortable naming the tools, the Langfuse region, and the version snapshot. Subscription plan names and the Langfuse project name are deliberately omitted.
 - [ ] Describe the Telegram interface only as planned work unless it is built and verified.
-- [ ] Review the five lessons and the Telegram paragraph (the only remaining `[AUTHOR REVIEW]` markers).
+- [x] Lessons learned and the Telegram paragraph now use your own wording; no review markers remain.
 - [ ] Sources: `README.md`, `docs/final-architecture.md`, `docs/verification-matrix.md`, `docs/git-worktrees.md`, `docs/codex-vs-claude-workflow.md`, `reports/fedora/phase-10-end-to-end.md`.
