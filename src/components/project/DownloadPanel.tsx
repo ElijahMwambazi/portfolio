@@ -1,9 +1,8 @@
 import { useMemo, useState } from "react";
 import type { Platform, Project } from "../../types/project";
+import { formatBytes, formatDate } from "../../lib/format";
 import {
   detectPlatform,
-  formatBytes,
-  formatDate,
   isChecksumAsset,
   platformFromAsset,
   platformLabels,

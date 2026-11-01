@@ -1,5 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { projects } from "../content/projects";
+import { usePageMeta } from "../hooks/usePageMeta";
+import { absoluteUrl } from "../lib/site";
 import { Container } from "../components/ui/Container";
 import { StatusBadge } from "../components/ui/StatusBadge";
 import { ProjectLogo } from "../components/ui/ProjectLogo";
@@ -45,6 +47,16 @@ function ExternalLinkIcon() {
 export function ProjectPage() {
   const { slug } = useParams();
   const project = projects.find((item) => item.slug === slug);
+
+  usePageMeta(
+    project
+      ? {
+          title: project.title,
+          description: project.summary,
+          canonical: absoluteUrl(`/work/${project.slug}`),
+        }
+      : null,
+  );
 
   if (!project) {
     return (
