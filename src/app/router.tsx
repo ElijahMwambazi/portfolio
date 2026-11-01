@@ -5,12 +5,13 @@ import { WorkPage } from "../pages/WorkPage";
 import { ProjectPage } from "../pages/ProjectPage";
 import { NotesPage } from "../pages/NotesPage";
 import { NotFoundPage } from "../pages/NotFoundPage";
+import { RouteErrorPage } from "../pages/RouteErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <SiteLayout />,
-    errorElement: <NotFoundPage />,
+    errorElement: <RouteErrorPage />,
     children: [
       { index: true, element: <HomePage /> },
       { path: "work", element: <WorkPage /> },
