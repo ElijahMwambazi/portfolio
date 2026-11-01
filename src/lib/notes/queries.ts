@@ -69,3 +69,12 @@ export function adjacentNotes(published: Note[], slug: string) {
   if (i === -1) return { newer: undefined, older: undefined };
   return { newer: published[i - 1], older: published[i + 1] };
 }
+
+/**
+ * Published notes for the given slugs, in the order listed. Unknown slugs and
+ * drafts are skipped, so a project can reference a note before it ships.
+ */
+export function notesBySlugs(slugs: string[] | undefined, published: Note[]): Note[] {
+  if (!slugs) return [];
+  return slugs.flatMap((slug) => published.find((n) => n.slug === slug) ?? []);
+}

@@ -249,6 +249,7 @@ export const projects: Project[] = [
     type: "Payments PWA",
     focus: "Bitcoin and Lightning, mobile money, privacy",
     year: "2026",
+    relatedNotes: ["bitcoin-mobile-money-bridge"],
     notice:
       "Development prototype. It uses deterministic fake Lightning and mobile-money adapters only: no real funds, live rates, or mainnet payments are supported, and it is not production-safe.",
     screenshots: [
@@ -440,6 +441,7 @@ make down    # stop containers`,
     type: "Market data terminal",
     focus: "Zambian markets, FX, data engineering",
     year: "2026",
+    relatedNotes: ["bank-of-zambia-fx-adapter"],
     notice:
       "v0.1 scaffold. Only the Bank of Zambia USD/ZMW backend adapter exists; frontend FX views and the LuSE, crypto, and commodity adapters are still pending. It deliberately shows no fabricated prices.",
     features: [
@@ -584,6 +586,7 @@ npm run dev`,
     type: "Documentation and tooling",
     focus: "AI-assisted development, security boundaries, verification",
     year: "2026",
+    relatedNotes: ["fedora-ai-development-stack"],
     notice:
       "This is documentation, not an installable product. It records what was and was not verified on one machine, and historical acceptance is not a live availability guarantee.",
     features: [

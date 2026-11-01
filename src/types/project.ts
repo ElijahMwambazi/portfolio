@@ -69,6 +69,8 @@ export type Project = {
   install?: InstallStep[];
   requirements?: string[];
   faq?: ProjectFaq[];
+  /** Slugs of related engineering notes. Only published notes are shown. */
+  relatedNotes?: string[];
   /** Short honest note shown near the download/get-started area. */
   notice?: string;
 };
