@@ -42,6 +42,19 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 
 > **What is real and what is not.** No Voltage connection, Lipila connection, live exchange rate, mainnet payment or real funds exist in this codebase. The bridge gate defaults to `disabled`; development may choose `fake`; production rejects fake execution. Real provider behaviour is **unverified** (the docs say so, and so should this article).
 
+### What works, what is fake, what is planned
+
+| Capability | Status |
+|---|---|
+| Request creation, claim-once checkout, integer quotes, state machine, journal, reservations, callbacks, refunds | Implemented and tested against deterministic fakes |
+| Fake Voltage/LND and fake Lipila treasuries | Implemented; bridge gate `fake` is for development only and production rejects it |
+| Direct Lightning (BTC → BTC) contract preserving the merchant's own invoice | Implemented as a contract; no live Lightning payment or wallet-settlement verification |
+| Real Lightning via Voltage-hosted LND | **Planned, not built** |
+| Real mobile money via Lipila | **Planned, not built** |
+| Live BTC/ZMW rates, real funds, mainnet payments, production destination store | **Not implemented** |
+
+The planned direction is a Voltage-hosted LND node for the Bitcoin leg and Lipila for the mobile-money leg. Both are intentions: no credentials, network calls or provider behaviour exist in the codebase, and the article should not describe real fees, limits or failure modes of either.
+
 ## Implementation details
 
 **One-time, claim-once requests.** A merchant creates a request that stays open for 15 minutes by default. Method selection creates a fresh 60-second, integer-only quote that the guest must explicitly confirm. Confirmation takes a row lock and moves the request from `open` to `claimed`, recording the winning selection key and quote and allocating a stable payment-intent UUID. A different claimant gets a conflict; the winning key resumes the same intent.
@@ -66,6 +79,7 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 - **Custody versus convenience.** Conversion needs inventory on both sides, which means holding someone's value for a short time. The accountless design limits what is stored, but it does not remove that trust.
 - **Direct payments are unverifiable by default.** In BTC → BTC the funds go from payer to merchant, so Ntumba can't see them. Status stays `direct_payment_pending` until a merchant-wallet integration or independent proof exists.
 - **Privacy versus recoverability.** A non-durable destination vault is good for privacy and bad for crash recovery. The current answer is refund, not retry.
+- **Liquidity is the operator's problem.** Both conversion directions need inventory on each side, reserved before a payment is promised. The code models inventory positions and reservations, but live rates, real funding and rebalancing are not implemented, so liquidity risk is described by design, not measured.
 - **Complexity of the saga.** Late events, unknown outcomes and refunds make the state machine large. **[AUTHOR TO PROVIDE: which parts you found hardest, and what you cut.]**
 
 ## Lessons learned

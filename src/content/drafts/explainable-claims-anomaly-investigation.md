@@ -8,7 +8,7 @@ featured: false
 draft: true
 ---
 
-> **Draft status and confidentiality.** Written from the private repository for this tool (README, user guide, release-verification doc, tests). It describes work done in a business context, so I have **anonymised it**: no organisation, provider, member or claim names; no screenshots (the repo's screenshots are from sample data, but they are not reproduced here); and no exact detector thresholds. **[AUTHOR TO PROVIDE]** whether you may publish this at all, whether the product name (the repo uses "MedIQ") and the domain can be named, and how much detector detail is acceptable. Delete this note and the checklist before publishing.
+> **Draft status and confidentiality.** Written from the private repository for this tool (README, user guide, release-verification doc, tests). It describes work done in a business context, so I have **anonymised it**: no organisation, provider, member or claim names; no screenshots (the repo's screenshots are from sample data, but they are not reproduced here); and no exact detector thresholds. **[AUTHOR TO PROVIDE]** whether you may publish this at all, whether the product name (redacted here; the repository uses a branded name) and the domain can be named, and how much detector detail is acceptable. Delete this note and the checklist before publishing.
 
 ## The problem
 
@@ -78,6 +78,16 @@ These are regression checks for layout and flow, not pixel comparisons. No test 
 ---
 
 ## Review checklist (delete before publishing)
+
+**Confidentiality flags: employer-identifying or potentially confidential content (do not publish until each is cleared):**
+
+- [ ] **Existence and nature of the tool.** The article says a claims-review tool was built in a business context; whether to say so at all is a permission question.
+- [ ] **Domain terms.** Claims, members, providers, invoices and "claims reviewers" place the work in health-claims processing.
+- [ ] **Detection design.** Rule-based findings with confidence levels, context-is-not-a-verdict, and the exposure calculation (cluster value minus the largest) describe proprietary analytical logic, even without thresholds.
+- [ ] **Reporting and telemetry.** The offline outbox, management reporting and confirmation-dialog design describe internal operations and a management channel.
+- [ ] **Release and CI details.** Packaging layout, test matrix and packaged-smoke-test details describe internal tooling.
+- [ ] **Product name.** Redacted in the status note on 2026-11-01. It remains in this file's earlier Git history on the public repository, which cannot be undone by editing.
+- [ ] **Repository visibility.** This draft is tracked in a public repository. Consider moving it out before further edits.
 
 - [ ] **Permission to publish.** Confirm with the owner/employer that this can be described in public, and at what level of detail.
 - [ ] Remove or generalise the product name, provider and domain terms if required.

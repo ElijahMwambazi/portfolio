@@ -84,6 +84,7 @@ A test injects errors whose messages contain internal host details and private p
 
 ## Review checklist (delete before publishing)
 
+- [ ] **Review flag: upstream support and usage terms.** The adapter reads an undocumented website endpoint, not a documented or contractual API, and nothing in the repository records that the Bank of Zambia permits or supports programmatic use. Check its terms of use and whether the endpoint is intended for this before describing it, linking it or publishing the endpoint shape.
 - [ ] Confirm the BoZ endpoint and attribution are fine to describe publicly.
 - [ ] Confirm the fixture offset statement is acceptable as described.
 - [ ] Add your own lessons and any real-world incidents.

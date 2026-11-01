@@ -8,7 +8,7 @@ featured: false
 draft: true
 ---
 
-> **Draft status: partly outline.** The article's headline topics are **MSI packaging, certificate distribution, Action1 deployment, pilot testing and rollout strategy**. I found **no evidence of any of those** in your repositories or local files: the closest private project documents a PyInstaller build that explicitly "does not … create an installer", and a design document that lists Inno Setup, MSIX and Intune only as future options. So the first-hand parts below are **[AUTHOR TO PROVIDE]** prompts. What *is* sourced is the build-and-verify discipline from that project, summarised in the second section. Nothing company-specific has been included. Delete this note and the checklist before publishing.
+> **Draft status: partly outline.** The headline topics are **MSI packaging, certificate distribution, Action1 deployment, pilot testing and rollout strategy**. This describes real deployment work you carried out, but its operational evidence (packaging scripts, certificates, deployment-tool configuration, pilot and rollout records) is not in the repositories or local files I could search, and I make no inference from that absence. The first-hand parts below are therefore **[AUTHOR TO PROVIDE]** prompts. The second section summarises build-and-verify practices from a separate project's documentation; **that project is employer-related, so treat that section as flagged confidential content** until you decide what may be said. Nothing company-specific is included. Delete this note and the checklist before publishing.
 
 ## The problem
 

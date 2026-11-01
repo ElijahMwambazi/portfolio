@@ -8,7 +8,7 @@ featured: false
 draft: true
 ---
 
-> **Draft status: outline, not a finished article.** I searched your GitHub repositories and local project folders and found **no source, configuration or notes for this setup**: no Debian provisioning, no Nginx config, no LAN DNS records, no Tauri updater configuration, no MSI packaging. The only Tauri project I can see (Drop Den) has no updater configured and builds an RPM. So every statement about *your* environment is a placeholder below. The Tauri updater facts are from the official documentation and are marked as such. Nothing here should be published until you fill in the **[AUTHOR TO PROVIDE]** sections from your real setup.
+> **Draft status: outline, not a finished article.** This describes real infrastructure work you carried out, but the operational evidence (Debian provisioning, Nginx configuration, LAN DNS records, updater configuration, MSI builds and the signing setup) is not in the GitHub repositories or local project folders I could search, and I make no inference from that absence: it may live on the servers, in other systems or in material that was never committed. Because I have not seen it, every statement about *your* environment below is a placeholder, and the Tauri updater facts come from the official documentation and are marked as such. Nothing here should be published until you supply the evidence listed in the review notes and fill in the **[AUTHOR TO PROVIDE]** sections.
 
 ## The problem
 
