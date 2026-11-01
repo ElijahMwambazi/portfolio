@@ -187,7 +187,13 @@ export function NotesPage() {
               </p>
               <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {drafts.map((note) => (
-                  <NoteCard key={note.slug} note={note} />
+                  <NoteCard
+                    key={note.slug}
+                    note={note}
+                    activeTag={tag}
+                    onTagClick={(t) => update("tag", t)}
+                    onCategoryClick={(c) => update("category", c)}
+                  />
                 ))}
               </div>
             </div>

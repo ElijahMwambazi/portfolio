@@ -77,3 +77,10 @@ describe("parseNoteSource", () => {
     expect(() => parseNoteSource(valid.replace(/\n\nHello[\s\S]*$/, "\n"), "x.md")).toThrow(/body is empty/);
   });
 });
+
+describe("tag normalisation", () => {
+  it("de-duplicates tags that differ only by case or whitespace", () => {
+    const note = parseNoteSource(valid.replace("[One, two]", "[Linux, linux, ' LINUX ']"), "a-title.md");
+    expect(note.tags).toEqual(["linux"]);
+  });
+});

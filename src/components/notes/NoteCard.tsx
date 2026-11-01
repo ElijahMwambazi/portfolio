@@ -44,7 +44,7 @@ export function NoteCard({
           <button
             type="button"
             onClick={() => onCategoryClick?.(note.category)}
-            className="uppercase tracking-[0.12em] transition hover:text-white"
+            className="relative z-10 uppercase tracking-[0.12em] transition hover:text-white"
           >
             {note.category}
           </button>

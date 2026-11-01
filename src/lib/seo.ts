@@ -66,11 +66,11 @@ export function renderHeadHtml(meta: PageMeta): string {
 export function renderPageHtml(template: string, meta: PageMeta): string {
   const withTitle = template.replace(
     /<title>[\s\S]*?<\/title>/,
-    `<title>${escapeHtml(pageTitle(meta.title))}</title>`,
+    () => `<title>${escapeHtml(pageTitle(meta.title))}</title>`,
   );
   // Drop the shell's generic description so there is a single one.
   const cleaned = withTitle.replace(/\s*<meta name="description"[^>]*>/g, "");
-  return cleaned.replace("</head>", `${renderHeadHtml(meta)}\n  </head>`);
+  return cleaned.replace("</head>", () => `${renderHeadHtml(meta)}\n  </head>`);
 }
 
 export function noteMeta(note: ParsedNote, origin?: string): PageMeta {

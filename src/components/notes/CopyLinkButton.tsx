@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function CopyLinkButton({ url }: { url: string }) {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
+
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
 
   async function copy() {
     try {
@@ -10,7 +13,8 @@ export function CopyLinkButton({ url }: { url: string }) {
     } catch {
       setState("failed");
     }
-    window.setTimeout(() => setState("idle"), 2000);
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setState("idle"), 2000);
   }
 
   return (

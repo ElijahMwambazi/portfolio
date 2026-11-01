@@ -10,12 +10,16 @@ export function formatBytes(bytes: number): string {
   return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[i]}`;
 }
 
-/** Formats an ISO date or timestamp. Date-only values are read as UTC. */
+/**
+ * Formats an ISO date or timestamp. Date-only values (note dates) are read as
+ * UTC so they never shift a day; full timestamps use the viewer's local time.
+ */
 export function formatDate(iso: string): string {
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(iso);
   return new Date(iso).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
-    timeZone: "UTC",
+    ...(dateOnly ? { timeZone: "UTC" } : {}),
   });
 }

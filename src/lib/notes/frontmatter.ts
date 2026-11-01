@@ -146,7 +146,7 @@ export function parseNoteSource(source: string, file: string): ParsedNote {
     date,
     updated,
     category: category as NoteCategory,
-    tags: (tags as string[]).map((t) => t.trim().toLowerCase()),
+    tags: [...new Set((tags as string[]).map((t) => t.trim().toLowerCase()))],
     featured,
     draft,
     body,

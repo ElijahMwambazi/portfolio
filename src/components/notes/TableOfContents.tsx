@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Heading } from "../../lib/notes/headings";
 
 function useActiveHeading(ids: string[]) {
@@ -59,7 +59,7 @@ export function TableOfContents({
   headings: Heading[];
   variant: "mobile" | "desktop";
 }) {
-  const active = useActiveHeading(headings.map((h) => h.id));
+  const active = useActiveHeading(useMemo(() => headings.map((h) => h.id), [headings]));
   if (headings.length < 2) return null;
 
   if (variant === "mobile") {

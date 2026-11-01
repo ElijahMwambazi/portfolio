@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Container } from "../components/ui/Container";
 import { MarkdownContent } from "../components/notes/MarkdownContent";
 import { TableOfContents } from "../components/notes/TableOfContents";
@@ -39,6 +39,7 @@ function NotFound() {
 
 export function NotePage() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const note = slug ? notesStore.find(slug) : undefined;
   const headings = useMemo(() => (note ? extractHeadings(note.body) : []), [note]);
 
@@ -139,7 +140,12 @@ export function NotePage() {
               <h2 className="mb-5 text-lg font-medium text-neutral-100 sm:text-xl">Related notes</h2>
               <div className="grid gap-4 md:grid-cols-3">
                 {related.map((n) => (
-                  <NoteCard key={n.slug} note={n} />
+                  <NoteCard
+                    key={n.slug}
+                    note={n}
+                    onTagClick={(t) => navigate(`/notes?tag=${encodeURIComponent(t)}`)}
+                    onCategoryClick={(c) => navigate(`/notes?category=${encodeURIComponent(c)}`)}
+                  />
                 ))}
               </div>
             </div>
