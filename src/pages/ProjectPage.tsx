@@ -56,7 +56,11 @@ export function ProjectPage() {
           description: project.summary,
           canonical: absoluteUrl(`/work/${project.slug}`),
         }
-      : null,
+      : {
+          title: "Project not found",
+          description: "This project does not exist.",
+          noindex: true,
+        },
   );
 
   if (!project) {

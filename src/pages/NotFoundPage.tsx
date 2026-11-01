@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
 import { Container } from "../components/ui/Container";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export function NotFoundPage() {
+  usePageMeta({
+    title: "Page not found",
+    description: "The page you are looking for does not exist.",
+    noindex: true,
+  });
   return (
     <section className="py-20">
       <Container>

@@ -9,6 +9,8 @@ export type PageMeta = {
   publishedTime?: string;
   modifiedTime?: string;
   tags?: string[];
+  /** Adds `robots: noindex`; used for genuine not-found screens. */
+  noindex?: boolean;
 };
 
 export const SITE_NAME = "Elijah Mwambazi";
@@ -38,6 +40,7 @@ export function metaTags(meta: PageMeta): { attrs: Record<string, string> }[] {
     { name: "twitter:title", content: meta.title },
     { name: "twitter:description", content: meta.description },
   ];
+  if (meta.noindex) tags.push({ name: "robots", content: "noindex" });
   if (meta.canonical) tags.push({ property: "og:url", content: meta.canonical });
   if (type === "article") {
     if (meta.publishedTime)

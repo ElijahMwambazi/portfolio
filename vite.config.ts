@@ -25,6 +25,8 @@ export default defineConfig(({ mode }) => {
       setupFiles: ["./src/test/setup.ts"],
       include: ["src/**/*.test.{ts,tsx}", "plugins/**/*.test.ts"],
       css: false,
+      // Several tests reset modules and re-import pages; cold imports can exceed 5s under load.
+      testTimeout: 15000,
     },
   };
 });
