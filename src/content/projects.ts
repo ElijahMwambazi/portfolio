@@ -581,7 +581,6 @@ npm run dev`,
     description:
       "A version-controlled source of truth for a staged Fedora AI development stack: sanitized configuration templates, diagnostics, and dated validation evidence for working with Codex, Claude Code, Graphify, Headroom, and Git worktrees.",
     stack: ["Bash", "Python", "Fedora", "Git worktrees", "Markdown"],
-    githubUrl: "https://github.com/ElijahMwambazi/ai-dev-stack",
     status: "Reference",
     type: "Documentation and tooling",
     focus: "AI-assisted development, security boundaries, verification",
@@ -623,16 +622,6 @@ npm run dev`,
       {
         title: "Why it exists",
         body: "To make a fast-moving tool stack reproducible and honest, with its limits written down next to its capabilities.",
-      },
-    ],
-    links: [
-      {
-        label: "Final architecture",
-        href: "https://github.com/ElijahMwambazi/ai-dev-stack/blob/main/docs/final-architecture.md",
-      },
-      {
-        label: "Verification matrix",
-        href: "https://github.com/ElijahMwambazi/ai-dev-stack/blob/main/docs/verification-matrix.md",
       },
     ],
   },

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { ProjectPage } from "../../pages/ProjectPage";
 import { RelatedNotes } from "./RelatedNotes";
 import { toNote } from "../../lib/notes/queries";
 import { projects } from "../../content/projects";
@@ -42,5 +43,26 @@ describe("project → note references", () => {
     const referenced = projects.flatMap((p) => p.relatedNotes ?? []);
     expect(referenced.length).toBeGreaterThan(0);
     for (const slug of referenced) expect(files).toContain(slug);
+  });
+});
+
+describe("private repositories", () => {
+  it("AI Dev Stack does not link its private repository or docs", () => {
+    const p = projects.find((x) => x.slug === "ai-dev-stack")!;
+    expect(p.githubUrl).toBeUndefined();
+    expect(JSON.stringify(p)).not.toMatch(/github\.com\/[^"]*ai-dev-stack/);
+  });
+
+  it("the project page still renders and exposes no github link to it", () => {
+    render(
+      <MemoryRouter initialEntries={["/work/ai-dev-stack"]}>
+        <Routes>
+          <Route path="/work/:slug" element={<ProjectPage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole("heading", { level: 1, name: "AI Dev Stack" })).toBeInTheDocument();
+    const hrefs = screen.getAllByRole("link").map((a) => a.getAttribute("href") ?? "");
+    expect(hrefs.filter((h) => /ai-dev-stack/.test(h))).toEqual([]);
   });
 });
