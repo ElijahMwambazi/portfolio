@@ -46,7 +46,7 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 
 **One-time, claim-once requests.** A merchant creates a request that stays open for 15 minutes by default. Method selection creates a fresh 60-second, integer-only quote that the guest must explicitly confirm. Confirmation takes a row lock and moves the request from `open` to `claimed`, recording the winning selection key and quote and allocating a stable payment-intent UUID. A different claimant gets a conflict; the winning key resumes the same intent.
 
-**Destinations stay out of URLs and out of the database.** The merchant's raw destination (mobile number, Lightning address or invoice) goes into a development-only, expiring in-memory vault, and only an opaque token is persisted. If the vault loses the value after the source side has settled, the saga does not pretend success: it releases unmoved liquidity, creates one refund obligation and enters `refund_required`. **[VERIFY: the docs say production would need provider tokenisation or a short-lived envelope-encrypted store. Don't present either as built.]**
+**Destinations stay out of URLs and out of the database.** The merchant's raw destination (mobile number, Lightning address or invoice) goes into a development-only, expiring in-memory vault, and only an opaque token is persisted. If the vault loses the value after the source side has settled, the saga does not pretend success: it releases unmoved liquidity, creates one refund obligation and enters `refund_required`. Production would need provider tokenisation or a short-lived envelope-encrypted store; neither is built (`docs/CURRENT_STATE.md`, "Not implemented").
 
 **Liquidity is reserved before it is promised.** Before collecting, the coordinator reserves destination-side inventory. Spendable value is the current book balance minus active reservations, computed with a row lock, so concurrent requests cannot over-reserve. Journal movements, inventory changes, the reservation and the lifecycle update share one transaction.
 
@@ -79,8 +79,8 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 ## Current limitations and next steps
 
 - Fake providers only; no real funds.
-- The destination vault is process memory, so an open request whose destination is gone becomes unavailable and the design is not multi-instance payable.
-- Real Voltage and Lipila semantics, fees, limits and failure modes are unverified. **[VERIFY: do not describe Lipila or Voltage features beyond what the repo states.]**
+- The destination vault is process memory (a development-only store), so an open request whose destination is gone becomes unavailable. Public request reads are durable and multi-instance, but payment is not, because the destination lives in one process.
+- Real Voltage and Lipila semantics, fees, limits and failure modes are unverified. The repo states that no Voltage or Lipila integration, credentials or network calls exist, so this article should not describe their features.
 - Integrating real providers and a production-safe destination store are the next major steps.
 
 ---

@@ -51,7 +51,7 @@ The UI is tested with pytest on both Linux and Windows runners in CI. Qt runs wi
 - A navigation smoke test visits every page, opens the evidence and settings dialogs, then resizes the window between 900×620 and 1600×1000 and asserts that key controls stay inside their containers.
 - A separate packaged smoke test launches the frozen executable in a path containing spaces, renders the window offscreen, imports a bundled synthetic workbook, runs the detectors, navigates every page and writes and reopens the Excel exports.
 
-These are regression checks for layout and flow, not pixel comparisons. **[VERIFY: say whether you ever used screenshot comparison; I found no evidence of it in the tests I read.]**
+These are regression checks for layout and flow, not pixel comparisons. No test in the repository compares screenshots; `scripts/capture_screenshots.py` only generates documentation images. **[AUTHOR TO PROVIDE: confirm you never used screenshot comparison elsewhere.]**
 
 ## Challenges and trade-offs
 
@@ -72,7 +72,7 @@ These are regression checks for layout and flow, not pixel comparisons. **[VERIF
 
 - Findings are heuristics for human review, and the tool does not produce determinations.
 - The local database is unencrypted by the application.
-- No installer or automatic update mechanism ships today; a secure update design exists only as a document. **[VERIFY]**
+- No installer or automatic update mechanism ships today; a secure update design exists only as a document (`docs/OTA_UPDATES.md`, labelled a future design; the README says the app does not check for or install updates).
 - **[AUTHOR TO PROVIDE]** What is planned.
 
 ---

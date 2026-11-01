@@ -8,11 +8,11 @@ featured: false
 draft: true
 ---
 
-> **Draft status.** Written from the `ai-dev-stack` repository (17 commits, 2026-09-19 to 2026-10-10, plus the 2026-10-31 path cleanup). Versions and model names below are **a snapshot dated 2026-10-10** from that repo's docs and must be re-checked before publishing. **[VERIFY]** and **[AUTHOR TO PROVIDE]** mark things only you can confirm. Delete this note and the checklist before publishing.
+> **Draft status.** Written from the `ai-dev-stack` repository (17 commits, 2026-09-19 to 2026-10-10; claims checked against the repository on 2026-11-01). Tool versions and model names are **a snapshot dated 2026-10-10**; two of them had already changed on the machine by 2026-11-01 (see "Snapshot decay"). **[VERIFY]** and **[AUTHOR TO PROVIDE]** mark things only you can confirm. Delete this note and the checklist before publishing.
 
 ## The problem
 
-I wanted to work with more than one AI coding agent on the same machine without losing track of what each one could see, what it changed, and what I had actually verified. The result is a repository, `ai-dev-stack`, that is the version-controlled source of truth for a staged Fedora 43 workstation: operating documentation, sanitised configuration templates, diagnostic scripts and dated validation reports.
+I wanted to work with more than one AI coding agent on the same machine without losing track of what each one could see, what it changed, and what I had actually verified. The result is a repository, `ai-dev-stack`, that is the version-controlled source of truth for a staged Fedora 43 workstation: operating documentation, diagnostic scripts, dated validation reports and two sanitised environment templates.
 
 ## Constraints and requirements
 
@@ -39,7 +39,7 @@ Langfuse  -> explicit synthetic metadata harness only
 
 (This is a simplified rendering of the diagram in `docs/final-architecture.md`.)
 
-**Local context tools, on demand.** Graphify runs as a skill or CLI with local code-only extraction, with output kept outside the project and at most two workers. Headroom runs as an offline stdio MCP server with its own isolated environment and local exact-retrieval storage, with separate state for Codex and Claude. No HTTP proxy is enabled. **[VERIFY: expand "MCP" briefly for readers, and confirm what Headroom and Graphify do in your own words.]**
+**Local context tools, on demand.** Graphify runs as a skill or CLI with local code-only extraction, with output kept outside the project and at most two workers. Headroom runs as an offline stdio MCP server with its own isolated environment and local exact-retrieval storage, with separate state for Codex and Claude. No HTTP proxy is enabled. MCP is the Model Context Protocol, the interface through which an agent calls external tools. **[AUTHOR TO PROVIDE: what Headroom and Graphify do for you, in your own words.]**
 
 **An optional gateway left switched off.** OmniRoute is installed and hardened for loopback, with its service inactive and zero providers configured. I kept it optional because enabling it adds provider authorisation and another credential boundary that direct Codex or Claude work doesn't need.
 
@@ -60,14 +60,14 @@ The most useful artefact in the repo is `docs/verification-matrix.md`. Each row 
 - Claude's coding implementation is VERIFIED, but its own test execution is PARTIAL: a bundled shell command was denied and was not retried, so I ran the tests myself.
 - Claude's use of Graphify and Headroom is CONFIGURED / NOT EXERCISED. They were discovered and registered, but no successful invocation was recorded, so they are not marked verified.
 
-A short end-to-end comparison (documented as Phase 10) gave Codex and Claude the same small task, a typed `subtract(a, b)` function with tests, from the same base commit in separate worktrees. Both produced the same production code. Codex added six test methods and ran them (the suite went from 2 to 8 passing); Claude added three, and my independent run passed 5 of 5. I picked the Codex candidate for review because of broader committed tests and a completed test run, and the docs explicitly say that is a selection for one small task, not a claim that one model is better. Neither branch was merged.
+A short end-to-end comparison (documented as Phase 10) gave Codex and Claude the same small task, a typed `subtract(a, b)` function with tests, from the same base commit in separate worktrees. Both implementations had an identical signature and computation; only the docstrings differed. Codex added six test methods and ran them (the suite went from 2 to 8 passing); Claude added three, and my independent run passed 5 of 5. I picked the Codex candidate for review because of broader committed tests and a completed test run, and the docs explicitly say that is a selection for one small task, not a claim that one model is better. Neither branch was merged.
 
 ## Challenges and trade-offs
 
 - **Speed versus evidence.** Recording discovery, invocation and result separately is slower than assuming they work. It also stopped me from claiming Graphify or Headroom worked in Claude when I had no evidence.
 - **Permissions friction.** A combined edit-and-test shell command was blocked by the tool allowlist. The docs' conclusion is to separate edits from the allowed test command, report denials promptly, and not use bypass-permissions or repeat model calls to turn a partial result into an apparent pass.
-- **Snapshot decay.** Versions, model names and tool behaviour change quickly. The docs say historical acceptance is not a live availability guarantee, and doctor checks classify OK, WARN, NOT VERIFIED and FAIL rather than reporting a single green tick.
-- **Reproducibility is partial.** **[VERIFY]** Several `config/*` folders in the repo contain only `.gitkeep` placeholders and one env example. Decide how to describe "reproducible" honestly.
+- **Snapshot decay.** Versions, model names and tool behaviour change quickly. The docs record Codex 0.162.0 and Claude Code 2.1.296; on 2026-11-01 the installed versions were 0.166.0 and 2.1.316, while Graphify 0.9.64 and Headroom 0.37.0 still matched. The docs say historical acceptance is not a live availability guarantee, and doctor checks classify OK, WARN, NOT VERIFIED and FAIL rather than reporting a single green tick.
+- **Reproducibility is partial.** The repository documents the setup and records evidence, but it does not contain the applied configuration: the `config/codex`, `graphify`, `headroom`, `langfuse`, `omniroute` and `shared` folders hold only `.gitkeep` placeholders, and the only templates are `env/.env.example` and `config/omniroute.env.example`. Live configuration, state and credentials stay outside Git by design, so this is a documented, verifiable setup rather than a one-command rebuild.
 
 ## Lessons learned
 
@@ -89,7 +89,7 @@ A short end-to-end comparison (documented as Phase 10) gave Codex and Claude the
 ## Review checklist (delete before publishing)
 
 - [ ] Re-check every version and model name against the live setup.
-- [ ] Confirm the repository is public before linking to it (it was private when this draft was written; a path cleanup commit exists on branch `chore/prepare-public`).
+- [ ] The `ai-dev-stack` repository is **private** (checked 2026-11-01); there is no `chore/prepare-public` branch and no commit after 2026-10-10. Either do not link it, or publish it first. Before making it public, remove absolute home-directory paths from its docs and reports (found in 16 of its 95 tracked files).
 - [ ] Confirm what you are comfortable sharing about tools and accounts (plan names, Langfuse project name).
 - [ ] Add your own lessons and any problems you hit.
 - [ ] Sources: `README.md`, `docs/final-architecture.md`, `docs/verification-matrix.md`, `docs/git-worktrees.md`, `docs/codex-vs-claude-workflow.md`, `reports/fedora/phase-10-end-to-end.md`.

@@ -8,7 +8,7 @@ featured: false
 draft: true
 ---
 
-> **Draft status.** Written from the `zm-terminal` source and tests (commit `5efc127`). Items marked **[VERIFY]** need your confirmation; items marked **[AUTHOR TO PROVIDE]** are things only you can supply. Delete this note and the review checklist before publishing.
+> **Draft status.** Written from the `zm-terminal` source and tests (adapter introduced in commit `dcbffca`; claims rechecked against the code and tests on 2026-11-01). Items marked **[VERIFY]** need your confirmation; items marked **[AUTHOR TO PROVIDE]** are things only you can supply. Delete this note and the review checklist before publishing.
 
 ## The problem
 
@@ -29,7 +29,7 @@ The application API (FastAPI) exposes `GET /api/v1/fx/USDZMW`. The route calls a
 
 A few decisions did most of the work.
 
-**Rates stay decimal strings from end to end.** The parser accepts a rate only if it matches a plain decimal pattern, converts it with `Decimal`, and never goes through `float`. The response model serialises `buy`, `mid` and `sell` as JSON strings. One test feeds in a 30-digit rate and asserts it survives parsing and serialisation unchanged.
+**Rates stay decimal strings from end to end.** The parser accepts a rate only if it matches a plain decimal pattern, converts it with `Decimal`, and never goes through `float`. The response model serialises `buy`, `mid` and `sell` as JSON strings. One test feeds in a rate with 30 decimal places and asserts it survives parsing and serialisation unchanged.
 
 **Timestamps come from the machine-readable attribute, never the display text.** The adapter parses the HTML fragment with Python's `HTMLParser`, requires exactly one `<time>` element with a `datetime` attribute, and requires that attribute to be an explicit UTC timestamp (`Z` or `+00:00`). The visible text is ignored, and a test replaces it with "untrusted display text" to prove that. In the sample fixture, a row stamped `07:30:00Z` is displayed as `09:30`, which is the kind of mismatch that makes reading display text dangerous. **[VERIFY: the fixture's values are altered test data. Don't claim the live site shows this offset unless you checked.]**
 
@@ -78,7 +78,7 @@ A test injects errors whose messages contain internal host details and private p
 - Only USD/ZMW exists. The LuSE, crypto and commodity adapters are pending, and the README lists them as such.
 - The frontend does not display the quote yet; frontend FX commands and historical charts remain pending.
 - There are no stored quotes, so no history.
-- **[VERIFY]** Whether to rerun the test suite and state the current pass count. I have not run it for this draft.
+- Tests: the API suite (74 tests, of which 20 are the Bank of Zambia adapter and FX route tests) passed on 2026-11-01 in a clean virtual environment.
 
 ---
 
@@ -87,5 +87,5 @@ A test injects errors whose messages contain internal host details and private p
 - [ ] Confirm the BoZ endpoint and attribution are fine to describe publicly.
 - [ ] Confirm the fixture offset statement is acceptable as described.
 - [ ] Add your own lessons and any real-world incidents.
-- [ ] Rerun `make api-test` and cite the result, or remove the testing claims you can't back.
+- [ ] Test claim verified 2026-11-01 (74 passed via pytest in a throwaway venv; `make api-test` itself uses Docker and was not run). Re-run before publishing if the code changes.
 - [ ] Sources: `apps/api/app/services/boz.py`, `apps/api/app/schemas/fx.py`, `apps/api/app/api/router.py`, `apps/api/tests/test_boz.py`, `apps/api/tests/test_fx.py`, README.
