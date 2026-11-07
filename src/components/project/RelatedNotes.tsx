@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { NoteCard } from "../notes/NoteCard";
 import { notesBySlugs, type Note } from "../../lib/notes/queries";
 import { notesStore } from "../../lib/notes/store";
@@ -10,6 +11,7 @@ export function RelatedNotes({
   slugs?: string[];
   published?: Note[];
 }) {
+  const navigate = useNavigate();
   const notes = notesBySlugs(slugs, published);
   if (notes.length === 0) return null;
 
@@ -20,7 +22,12 @@ export function RelatedNotes({
       </h2>
       <div className="grid gap-4 md:grid-cols-2">
         {notes.map((note) => (
-          <NoteCard key={note.slug} note={note} />
+          <NoteCard
+            key={note.slug}
+            note={note}
+            onTagClick={(t) => navigate(`/notes?tag=${encodeURIComponent(t)}`)}
+            onCategoryClick={(c) => navigate(`/notes?category=${encodeURIComponent(c)}`)}
+          />
         ))}
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { ProjectPage } from "../../pages/ProjectPage";
 import { RelatedNotes } from "./RelatedNotes";
 import { toNote } from "../../lib/notes/queries";
@@ -25,6 +26,37 @@ describe("RelatedNotes", () => {
     expect(screen.getByRole("heading", { name: "Related engineering notes" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: pub.title })).toHaveAttribute("href", `/notes/${pub.slug}`);
     expect(screen.queryByText(draft.title)).not.toBeInTheDocument();
+  });
+
+  it("category and tag controls navigate to the filtered Notes page", async () => {
+    const user = userEvent.setup();
+    const pub = published.find((n) => n.tags.length > 0)!;
+    const Where = () => {
+      const l = useLocation();
+      return <p data-testid="where">{l.pathname + l.search}</p>;
+    };
+    const renderAt = () =>
+      render(
+        <MemoryRouter initialEntries={["/work/x"]}>
+          <Routes>
+            <Route path="/work/x" element={<RelatedNotes slugs={[pub.slug]} published={published} />} />
+            <Route path="/notes" element={<Where />} />
+          </Routes>
+        </MemoryRouter>,
+      );
+
+    const first = renderAt();
+    await user.click(screen.getByRole("button", { name: pub.category }));
+    expect(screen.getByTestId("where")).toHaveTextContent(
+      `/notes?category=${encodeURIComponent(pub.category)}`,
+    );
+    first.unmount();
+
+    renderAt();
+    await user.click(screen.getByRole("button", { name: pub.tags[0] }));
+    expect(screen.getByTestId("where")).toHaveTextContent(
+      `/notes?tag=${encodeURIComponent(pub.tags[0])}`,
+    );
   });
 
   it("renders nothing when no referenced note is published", () => {
