@@ -42,11 +42,24 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 
 > **What is real and what is not.** No Voltage connection, Lipila connection, live exchange rate, mainnet payment or real funds exist in this codebase. The bridge gate defaults to `disabled`; development may choose `fake`; production rejects fake execution. Real provider behaviour is **unverified** (the docs say so, and so should this article).
 
+### What works, what is fake, what is planned
+
+| Capability | Status |
+|---|---|
+| Request creation, claim-once checkout, integer quotes, state machine, journal, reservations, callbacks, refunds | Implemented and tested against deterministic fakes |
+| Fake Voltage/LND and fake Lipila treasuries | Implemented; bridge gate `fake` is for development only and production rejects it |
+| Direct Lightning (BTC → BTC) contract preserving the merchant's own invoice | Implemented as a contract; no live Lightning payment or wallet-settlement verification |
+| Real Lightning via Voltage-hosted LND | **Planned, not built** |
+| Real mobile money via Lipila | **Planned, not built** |
+| Live BTC/ZMW rates, real funds, mainnet payments, production destination store | **Not implemented** |
+
+The planned direction is a Voltage-hosted LND node for the Bitcoin leg and Lipila for the mobile-money leg. Both are intentions: no credentials, network calls or provider behaviour exist in the codebase, and the article should not describe real fees, limits or failure modes of either.
+
 ## Implementation details
 
 **One-time, claim-once requests.** A merchant creates a request that stays open for 15 minutes by default. Method selection creates a fresh 60-second, integer-only quote that the guest must explicitly confirm. Confirmation takes a row lock and moves the request from `open` to `claimed`, recording the winning selection key and quote and allocating a stable payment-intent UUID. A different claimant gets a conflict; the winning key resumes the same intent.
 
-**Destinations stay out of URLs and out of the database.** The merchant's raw destination (mobile number, Lightning address or invoice) goes into a development-only, expiring in-memory vault, and only an opaque token is persisted. If the vault loses the value after the source side has settled, the saga does not pretend success: it releases unmoved liquidity, creates one refund obligation and enters `refund_required`. **[VERIFY: the docs say production would need provider tokenisation or a short-lived envelope-encrypted store. Don't present either as built.]**
+**Destinations stay out of URLs and out of the database.** The merchant's raw destination (mobile number, Lightning address or invoice) goes into a development-only, expiring in-memory vault, and only an opaque token is persisted. If the vault loses the value after the source side has settled, the saga does not pretend success: it releases unmoved liquidity, creates one refund obligation and enters `refund_required`. Production would need provider tokenisation or a short-lived envelope-encrypted store; neither is built (`docs/CURRENT_STATE.md`, "Not implemented").
 
 **Liquidity is reserved before it is promised.** Before collecting, the coordinator reserves destination-side inventory. Spendable value is the current book balance minus active reservations, computed with a row lock, so concurrent requests cannot over-reserve. Journal movements, inventory changes, the reservation and the lifecycle update share one transaction.
 
@@ -66,6 +79,7 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 - **Custody versus convenience.** Conversion needs inventory on both sides, which means holding someone's value for a short time. The accountless design limits what is stored, but it does not remove that trust.
 - **Direct payments are unverifiable by default.** In BTC → BTC the funds go from payer to merchant, so Ntumba can't see them. Status stays `direct_payment_pending` until a merchant-wallet integration or independent proof exists.
 - **Privacy versus recoverability.** A non-durable destination vault is good for privacy and bad for crash recovery. The current answer is refund, not retry.
+- **Liquidity is the operator's problem.** Both conversion directions need inventory on each side, reserved before a payment is promised. The code models inventory positions and reservations, but live rates, real funding and rebalancing are not implemented, so liquidity risk is described by design, not measured.
 - **Complexity of the saga.** Late events, unknown outcomes and refunds make the state machine large. **[AUTHOR TO PROVIDE: which parts you found hardest, and what you cut.]**
 
 ## Lessons learned
@@ -79,8 +93,8 @@ Treasury logic sits behind explicit boundaries: a Bitcoin liquidity rail, a mobi
 ## Current limitations and next steps
 
 - Fake providers only; no real funds.
-- The destination vault is process memory, so an open request whose destination is gone becomes unavailable and the design is not multi-instance payable.
-- Real Voltage and Lipila semantics, fees, limits and failure modes are unverified. **[VERIFY: do not describe Lipila or Voltage features beyond what the repo states.]**
+- The destination vault is process memory (a development-only store), so an open request whose destination is gone becomes unavailable. Public request reads are durable and multi-instance, but payment is not, because the destination lives in one process.
+- Real Voltage and Lipila semantics, fees, limits and failure modes are unverified. The repo states that no Voltage or Lipila integration, credentials or network calls exist, so this article should not describe their features.
 - Integrating real providers and a production-safe destination store are the next major steps.
 
 ---

@@ -59,7 +59,7 @@ export function SiteHeader() {
         <Link
           to="/"
           onClick={closeMenu}
-          className="text-sm font-semibold uppercase tracking-[0.2em] text-neutral-100"
+          className="inline-flex min-h-6 min-w-6 items-center text-sm font-semibold uppercase tracking-[0.2em] text-neutral-100"
         >
           EM
         </Link>

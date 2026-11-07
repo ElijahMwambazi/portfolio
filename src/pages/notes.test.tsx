@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 
@@ -148,14 +148,14 @@ describe("SPA metadata", () => {
 
     await router.navigate("/notes/beta-on-fedora");
     await screen.findByRole("heading", { level: 1, name: "Beta on Fedora" });
-    expect(document.title).toBe("Beta on Fedora · Elijah Mwambazi");
+    await waitFor(() => expect(document.title).toBe("Beta on Fedora · Elijah Mwambazi"));
     expect(meta('meta[name="description"]')).toBe("Setting up a workstation.");
     expect(document.head.querySelectorAll('meta[name="description"]')).toHaveLength(1);
     expect(document.head.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
 
     await router.navigate("/notes");
     await screen.findByRole("heading", { level: 1, name: /Notes, ideas/ });
-    expect(document.title).toBe("Notes · Elijah Mwambazi");
+    await waitFor(() => expect(document.title).toBe("Notes · Elijah Mwambazi"));
     expect(meta('meta[property="og:type"]')).toBe("website");
     expect(document.head.querySelector('meta[property="article:published_time"]')).toBeNull();
   });

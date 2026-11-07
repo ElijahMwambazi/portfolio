@@ -15,6 +15,7 @@ function NotFound() {
   usePageMeta({
     title: "Note not found",
     description: "This note does not exist or has not been published.",
+    noindex: true,
   });
   return (
     <section className="py-16 sm:py-20 lg:py-24">

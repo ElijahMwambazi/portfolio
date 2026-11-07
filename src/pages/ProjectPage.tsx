@@ -8,6 +8,7 @@ import { ProjectLogo } from "../components/ui/ProjectLogo";
 import { DownloadPanel } from "../components/project/DownloadPanel";
 import { ScreenshotGallery } from "../components/project/ScreenshotGallery";
 import { InstallTabs } from "../components/project/InstallTabs";
+import { RelatedNotes } from "../components/project/RelatedNotes";
 
 function GitHubIcon() {
   return (
@@ -55,7 +56,11 @@ export function ProjectPage() {
           description: project.summary,
           canonical: absoluteUrl(`/work/${project.slug}`),
         }
-      : null,
+      : {
+          title: "Project not found",
+          description: "This project does not exist.",
+          noindex: true,
+        },
   );
 
   if (!project) {
@@ -328,6 +333,8 @@ export function ProjectPage() {
               </div>
             </div>
           ) : null}
+
+          <RelatedNotes slugs={project.relatedNotes} />
 
           {next && next.slug !== project.slug ? (
             <div className="mt-14 border-t border-white/10 pt-8">

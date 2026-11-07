@@ -249,6 +249,7 @@ export const projects: Project[] = [
     type: "Payments PWA",
     focus: "Bitcoin and Lightning, mobile money, privacy",
     year: "2026",
+    relatedNotes: ["bitcoin-mobile-money-bridge"],
     notice:
       "Development prototype. It uses deterministic fake Lightning and mobile-money adapters only: no real funds, live rates, or mainnet payments are supported, and it is not production-safe.",
     screenshots: [
@@ -440,6 +441,7 @@ make down    # stop containers`,
     type: "Market data terminal",
     focus: "Zambian markets, FX, data engineering",
     year: "2026",
+    relatedNotes: ["bank-of-zambia-fx-adapter"],
     notice:
       "v0.1 scaffold. Only the Bank of Zambia USD/ZMW backend adapter exists; frontend FX views and the LuSE, crypto, and commodity adapters are still pending. It deliberately shows no fabricated prices.",
     features: [
@@ -577,13 +579,13 @@ npm run dev`,
     title: "AI Dev Stack",
     summary: "Documented, verified AI coding workstation setup on Fedora.",
     description:
-      "A version-controlled source of truth for a staged Fedora AI development stack: sanitized configuration templates, diagnostics, and dated validation evidence for working with Codex, Claude Code, Graphify, Headroom, and Git worktrees.",
+      "A version-controlled source of truth for a staged Fedora AI development stack: configuration examples and environment templates, diagnostics, and dated validation evidence for working with Codex, Claude Code, Graphify, Headroom, and Git worktrees.",
     stack: ["Bash", "Python", "Fedora", "Git worktrees", "Markdown"],
-    githubUrl: "https://github.com/ElijahMwambazi/ai-dev-stack",
     status: "Reference",
     type: "Documentation and tooling",
     focus: "AI-assisted development, security boundaries, verification",
     year: "2026",
+    relatedNotes: ["fedora-ai-development-stack"],
     notice:
       "This is documentation, not an installable product. It records what was and was not verified on one machine, and historical acceptance is not a live availability guarantee.",
     features: [
@@ -620,16 +622,6 @@ npm run dev`,
       {
         title: "Why it exists",
         body: "To make a fast-moving tool stack reproducible and honest, with its limits written down next to its capabilities.",
-      },
-    ],
-    links: [
-      {
-        label: "Final architecture",
-        href: "https://github.com/ElijahMwambazi/ai-dev-stack/blob/main/docs/final-architecture.md",
-      },
-      {
-        label: "Verification matrix",
-        href: "https://github.com/ElijahMwambazi/ai-dev-stack/blob/main/docs/verification-matrix.md",
       },
     ],
   },

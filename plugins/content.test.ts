@@ -10,10 +10,7 @@ const dirs = {
 const EXPECTED_DRAFTS = [
   "bank-of-zambia-fx-adapter",
   "bitcoin-mobile-money-bridge",
-  "debian-tauri-internal-updates",
-  "explainable-claims-anomaly-investigation",
   "fedora-ai-development-stack",
-  "windows-office-application-deployment",
 ];
 
 describe("real content", () => {
